@@ -8,7 +8,7 @@ from adminRole.models import Advisor
 
 import hashlib, binascii, os
 
-
+# helper functions to encrypt, verify password fields
 def hash_password(password):
     """Hash a password for storing."""
     salt = hashlib.sha256(os.urandom(60)).hexdigest().encode("ascii")
@@ -28,6 +28,16 @@ def verify_password(stored_password, provided_password):
     return pwdhash == stored_password
 
 
+"""
+request:
+    name: String
+    email: Email
+    password: String
+response:
+    user_id: UserId
+"""
+
+
 class RegisterClassView(APIView):
     def post(self, request):
         name = request.data["name"]
@@ -39,7 +49,16 @@ class RegisterClassView(APIView):
         if not serialized_data.is_valid():
             return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
         user = serialized_data.save()
-        return Response({"userid": user.id}, status=status.HTTP_201_CREATED)
+        return Response({"user_id": user.id}, status=status.HTTP_201_CREATED)
+
+
+"""
+request:
+    email: Email
+    password: String
+response:
+    user_id: UserId
+"""
 
 
 class LoginClassView(APIView):
@@ -54,11 +73,28 @@ class LoginClassView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+"""
+request:
+    None
+response:
+    List of Advisors
+"""
+
+
 class ListAdvisorsView(APIView):
     def get(self, request, id):
         advisors = Advisor.objects.all()
         serialized_data = AdvisorSerializer(advisors, many=True)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+
+"""
+request:
+    datetime: DateTime in format %d-%m-%YT%H:%M:%S
+              example:  10-05-2021:16:41:46
+response:
+    None
+"""
 
 
 class BookAdvisorView(APIView):
@@ -76,10 +112,22 @@ class BookAdvisorView(APIView):
                     serialized_data.errors, status=status.HTTP_400_BAD_REQUEST
                 )
             serialized_data.save()
-            return Response(serialized_data.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+"""
+request:
+    None
+response:
+    booking_id: BookingId
+    booking_time: DateTime
+    advisor_id: AdvisorId
+    advisor_name: AdvisorName
+    advisor_profile_url: AdvisorProfile_URL
+"""
 
 
 class ListBookingsView(APIView):

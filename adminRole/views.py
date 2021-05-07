@@ -4,7 +4,13 @@ from rest_framework import status
 from .models import Advisor
 from .serializers import AdvisorSerializer
 
-
+"""
+request: 
+    name: String
+    profile_url: Url
+response:
+    None
+"""
 class AdvisorViewClass(APIView):
     def post(self, request):
         serializedData = AdvisorSerializer(data=request.data)

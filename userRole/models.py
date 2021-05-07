@@ -9,6 +9,7 @@ class User(models.Model):
     def __str__(self):
         return f"User({self.id},{self.name})"
 
+# booking model with one-to-one relations with Advisor and User models
 class Booking(models.Model):
     advisor = models.ForeignKey(Advisor,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
