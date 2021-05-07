@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import User,Booking
-from .serializers import UserSerializer,BookingSerializer
+from .models import User, Booking
+from .serializers import UserSerializer, BookingSerializer
 from adminRole.serializers import AdvisorSerializer
 from adminRole.models import Advisor
 
@@ -60,15 +60,46 @@ class ListAdvisorsView(APIView):
         serialized_data = AdvisorSerializer(advisors, many=True)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
 
+
 class BookAdvisorView(APIView):
-    def post(self,request,user_id,advisor_id):
+    def post(self, request, user_id, advisor_id):
         try:
-            serialized_data = BookingSerializer(data={'user':user_id,'advisor':advisor_id,'datetime':request.data['datetime']})
+            serialized_data = BookingSerializer(
+                data={
+                    "user": user_id,
+                    "advisor": advisor_id,
+                    "datetime": request.data["datetime"],
+                }
+            )
             if not serialized_data.is_valid():
-                return Response(serialized_data.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    serialized_data.errors, status=status.HTTP_400_BAD_REQUEST
+                )
             serialized_data.save()
-            return Response(serialized_data.data,status=status.HTTP_200_OK)
+            return Response(serialized_data.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+class ListBookingsView(APIView):
+    def get(self, request, user_id):
+        try:
+            booking = Booking.objects.all().filter(user=user_id)
+            serialized_data = BookingSerializer(booking, many=True)
+            response = []
+            for obj in serialized_data.data:
+                advisor = Advisor.objects.all().filter(id=obj["advisor"])[0]
+                newObj = {
+                    "booking_id": obj["id"],
+                    "booking_time": obj["datetime"],
+                    "advisor_id": advisor.id,
+                    "advisor_name": advisor.name,
+                    "advisor_profile_url": advisor.profile_url,
+                }
+                response.append(newObj)
+
+            return Response(response, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
