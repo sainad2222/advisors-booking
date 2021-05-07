@@ -4,4 +4,4 @@ from . import models
 class AdvisorSerializer(serializers.ModelSerializer):
     class Meta:
         model= models.Advisor
-        fields = ('name','profile_url')
+        fields = ('id','name','profile_url')

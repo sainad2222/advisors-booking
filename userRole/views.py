@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .models import User
 from .serializers import UserSerializer
+from adminRole.serializers import AdvisorSerializer
+from adminRole.models import Advisor
 
 import hashlib, binascii, os
 
@@ -52,3 +54,8 @@ class LoginClassView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class ListAdvisorsView(APIView):
+    def get(self, request, id):
+        advisors = Advisor.objects.all()
+        serialized_data = AdvisorSerializer(advisors, many=True)
+        return Response(serialized_data.data, status=status.HTTP_200_OK)

@@ -5,4 +5,4 @@ class Advisor(models.Model):
     profile_url = models.URLField(max_length=250)
 
     def __repr__(self):
-        return f"Advisor({name},{profile_url})"
+        return f"Advisor({self.id},{self.name},{self.profile_url})"
