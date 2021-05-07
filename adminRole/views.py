@@ -13,10 +13,8 @@ response:
 """
 class AdvisorViewClass(APIView):
     def post(self, request):
-        print("ENTERED")
         serializedData = AdvisorSerializer(data=request.data)
         if serializedData.is_valid():
             serializedData.save()
             return Response(status=status.HTTP_201_CREATED)
-        print(serializedData)
         return Response(serializedData.errors, status=status.HTTP_400_BAD_REQUEST)
