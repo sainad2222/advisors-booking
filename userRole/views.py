@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .models import User
-from .serializers import UserSerializer
+from .models import User,Booking
+from .serializers import UserSerializer,BookingSerializer
 from adminRole.serializers import AdvisorSerializer
 from adminRole.models import Advisor
 
@@ -59,3 +59,16 @@ class ListAdvisorsView(APIView):
         advisors = Advisor.objects.all()
         serialized_data = AdvisorSerializer(advisors, many=True)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+class BookAdvisorView(APIView):
+    def post(self,request,user_id,advisor_id):
+        try:
+            serialized_data = BookingSerializer(data={'user':user_id,'advisor':advisor_id,'datetime':request.data['datetime']})
+            if not serialized_data.is_valid():
+                return Response(serialized_data.errors,status=status.HTTP_400_BAD_REQUEST)
+            serialized_data.save()
+            return Response(serialized_data.data,status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
