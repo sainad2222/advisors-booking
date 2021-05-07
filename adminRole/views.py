@@ -13,6 +13,7 @@ response:
 """
 class AdvisorViewClass(APIView):
     def post(self, request):
+        print("ENTERED")
         serializedData = AdvisorSerializer(data=request.data)
         if serializedData.is_valid():
             serializedData.save()
