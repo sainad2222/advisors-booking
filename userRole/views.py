@@ -40,16 +40,19 @@ response:
 
 class RegisterClassView(APIView):
     def post(self, request):
-        name = request.data["name"]
-        email = request.data["email"]
-        password = request.data["password"]
-        hashed_password = hash_password(password)
-        updatedData = {"name": name, "email": email, "password": hashed_password}
-        serialized_data = UserSerializer(data=updatedData)
-        if not serialized_data.is_valid():
-            return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
-        user = serialized_data.save()
-        return Response({"user_id": user.id}, status=status.HTTP_201_CREATED)
+        try:
+            name = request.data["name"]
+            email = request.data["email"]
+            password = request.data["password"]
+            hashed_password = hash_password(password)
+            updatedData = {"name": name, "email": email, "password": hashed_password}
+            serialized_data = UserSerializer(data=updatedData)
+            if not serialized_data.is_valid():
+                return Response(serialized_data.errors, status=status.HTTP_400_BAD_REQUEST)
+            user = serialized_data.save()
+            return Response({"user_id": user.id}, status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 """
