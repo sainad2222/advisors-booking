@@ -17,4 +17,5 @@ class AdvisorViewClass(APIView):
         if serializedData.is_valid():
             serializedData.save()
             return Response(status=status.HTTP_201_CREATED)
+        print(serializedData)
         return Response(serializedData.errors, status=status.HTTP_400_BAD_REQUEST)
